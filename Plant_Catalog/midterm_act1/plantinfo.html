@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Plants Information</title>
+  <link rel="icon" type="image/gif/png" href="others/tab-icon.png">
+  <link rel="stylesheet" href="plantinfo.css">
+
+  <script>
+    function loadCatalog() {
+      let xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          showitems(this);
+        }
+      };
+      xhttp.open("GET", "plant_catalog.xml", true);
+      xhttp.send();
+    }
+    
+    function showitems(xml) {
+      let xmlDoc = xml.responseXML;
+      let table = "<tr><th>Common</th><th>Botanical</th><th>Zone</th><th>Light</th><th>Price</th><th>Availability</th></tr>";
+      let plants = xmlDoc.getElementsByTagName("PLANT");
+
+      for (let i = 0; i < plants.length; i++) {
+        let common = plants[i].getElementsByTagName("COMMON")[0].textContent;
+        let botanical = plants[i].getElementsByTagName("BOTANICAL")[0].textContent;
+        let zone = plants[i].getElementsByTagName("ZONE")[0].textContent;
+        let light = plants[i].getElementsByTagName("LIGHT")[0].textContent;
+        let price = plants[i].getElementsByTagName("PRICE")[0].textContent;
+        let availability = plants[i].getElementsByTagName("AVAILABILITY")[0].textContent;
+
+        table += "<tr onclick='selectPlant(this)'>" + 
+            "<td>" + common + "</td>" + 
+            "<td>" + botanical + "</td>" + 
+            "<td>" + zone + "</td>" +
+            "<td>" + light + "</td>" +
+            "<td>" + price + "</td>" +
+            "<td>" + availability + "</td>" +
+            
+            "</tr>";
+      }
+
+      document.getElementById("plantsTable").innerHTML = table;
+    }
+
+    function selectPlant(row) {
+      let common = row.cells[0].innerHTML;
+      let botanical = row.cells[1].innerHTML;
+      let zone = row.cells[2].innerHTML;
+      let light = row.cells[3].innerHTML;
+      let price = row.cells[4].innerHTML;
+      let availability = row.cells[5].innerHTML;
+      
+      document.getElementById("common").value = common;
+      document.getElementById("botanical").value = botanical;
+      document.getElementById("zone").value = zone;
+      document.getElementById("light").value = light;
+      document.getElementById("price").value = price;
+      document.getElementById("availability").value = availability;
+      
+      let selectedRow = document.querySelector("#plantsTable tr.selected");
+      if (selectedRow) {
+        selectedRow.classList.remove("selected");
+      }
+      row.classList.add("selected");
+    }
+    
+    function savePlant() {
+      let common = document.getElementById("common").value;
+      let botanical = document.getElementById("botanical").value;
+      let zone = document.getElementById("zone").value;
+      let light = document.getElementById("light").value;
+      let price = document.getElementById("price").value;
+      let availability = document.getElementById("availability").value;
+      
+      let selectedRow = document.querySelector("#plantsTable tr.selected");
+      selectedRow.cells[0].innerHTML = common;
+      selectedRow.cells[1].innerHTML = botanical;
+      selectedRow.cells[2].innerHTML = zone;
+      selectedRow.cells[3].innerHTML = light;
+      selectedRow.cells[4].innerHTML = price;
+      selectedRow.cells[5].innerHTML = availability;
+    }
+  </script>
+ 
+</head>
+<body onload="loadCatalog()">
+  
+
+  <div class="maincontainer">
+
+    <div class="table-container"> 
+      <h1>Plant Catalog</h1>
+
+      <table id="plantsTable"></table>
+    </div>
+
+    <div class="inputbox-container">
+
+      <div class="inputbox">
+    
+        <h2>Click on a plant to display its information.</h2>
+        
+        <label for="common">Common</label><br>
+        <input type="text" id="common"><br>
+        
+        <label for="botanical">Botanical</label><br>
+        <input type="text" id="botanical"><br>
+        
+        <label for="zone">Zone</label><br>
+        <input type="text" id="zone"><br>
+
+        <label for="light">Light</label><br>
+        <input type="text" id="light"><br>
+
+        <label for="price">Price</label><br>
+        <input type="text" id="price"><br>
+
+        <label for="availability">Availability</label><br>
+        <input type="text" id="availability"><br><br>
+      
+      </div>
+
+      <div class="savebtn-container">
+        <button class="savebtn" onclick="savePlant()">Save</button>
+      <div>
+
+    </div>
+
+  </div>
+</body>
+</html>
